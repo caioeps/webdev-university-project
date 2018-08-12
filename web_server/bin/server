@@ -1,0 +1,7 @@
+require_relative '../lib/http_server'
+require_relative '../lib/application'
+
+app = Application.new
+
+http_server = HTTPServer.new app
+http_server.run
