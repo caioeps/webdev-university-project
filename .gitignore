@@ -6,3 +6,5 @@ node_backend/node_modules
 node_backend/yarn.lock
 
 spec/examples.txt
+
+**/erl_crash.dump
