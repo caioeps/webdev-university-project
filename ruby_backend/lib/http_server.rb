@@ -60,6 +60,9 @@ class HTTPServer
 
     html = body.join('<br/>')
 
+    puts exception.message
+    puts exception.backtrace.join("\n")
+
     build_response(500, headers, [html])
   end
 

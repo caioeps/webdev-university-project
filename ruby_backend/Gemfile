@@ -1,0 +1,8 @@
+ruby '2.5.0'
+
+gem 'byebug'
+gem 'rack'
+
+group :development, :test do
+  gem 'rspec'
+end

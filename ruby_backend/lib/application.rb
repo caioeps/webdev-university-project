@@ -5,6 +5,8 @@ $LOAD_PATH.unshift(File.expand_path('../..', __dir__))
 require 'bundler'
 require 'pathname'
 
+require_relative './framework'
+
 Bundler.require(:default)
 
 class Application
@@ -19,7 +21,7 @@ class Application
   end
 
   def call(env)
-    routes.action(env).call(env)
+    routes.action(env).process_request(env)
   end
 
   def routes
@@ -33,11 +35,12 @@ class Application
   private
 
   def load_dependencies
-    puts 'Loading dependencies'
+    puts 'Loading application files...'
     Dir.glob(root + 'apps/**/controllers/**/*.rb') do |filename|
       puts "  Loading #{filename}"
       require filename
     end
+    puts 'Done.'
   end
 end
 
