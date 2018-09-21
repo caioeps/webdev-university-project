@@ -3,8 +3,16 @@
 ## Setting up
 ./bin/setup
 
-## Starting server
+## Node Backend
+### Starting ther server
+```
+bin/run node_backend yarn start
+```
+
+Then head to `localhost:3000`.
+
+## Ruby backend
+### Starting server
 foreman start -f Procfile.dev
 
-## Accessing
-Go to `localhost:3000`
+Then head to `localhost:3000`.

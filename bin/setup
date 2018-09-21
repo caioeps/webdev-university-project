@@ -3,4 +3,6 @@
 echo '== Installing foreman =='
 gem install foreman --conservative
 
-./web_server/bin/setup
+bin/run web_server bin/setup
+bin/run node_backend yarn
+
