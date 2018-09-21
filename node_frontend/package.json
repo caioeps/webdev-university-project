@@ -1,0 +1,29 @@
+{
+  "name": "node-backend",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "webpack": "node_modules/webpack/bin/webpack.js --config=webpack.config.js",
+    "webpack-dev-server": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --config=webpack.config.js"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "node-sass-middleware": "0.11.0",
+    "nodemon": "^1.18.4",
+    "pug": "2.0.0-beta11",
+    "webpack-dev-server": "^3.1.8",
+    "webpack-manifest-plugin": "^2.0.4"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "webpack": "^4.19.1",
+    "webpack-cli": "^3.1.0"
+  }
+}
