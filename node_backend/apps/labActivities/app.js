@@ -12,7 +12,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use('/', require('./routes'));
 
 app.use(sassMiddleware({
-  src: path.join(__dirname, 'assets'),
+  src: path.join(__dirname, 'assets', 'stylesheet'),
   dest: path.join(global.APP_ROOT, 'public', 'assets', 'labActivities'),
   indentedSyntax: false, // true = .sass and false = .scss
   sourceMap: true

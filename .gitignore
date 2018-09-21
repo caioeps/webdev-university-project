@@ -2,8 +2,10 @@
 .bash_history
 .byebug_history
 
-node_backend/node_modules
-node_backend/yarn.lock
+**/node_modules
+**/yarn.lock
+
+**/public/packs
 
 spec/examples.txt
 
