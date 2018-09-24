@@ -14,7 +14,7 @@ module.exports = (app) => {
   // Cookies
   app.use(cookieParser());
 
-  app.use(express.static(path.join(APP_ROOT, 'public')));
+  app.use('/public', express.static(path.join(APP_ROOT, 'public')));
 
   return app;
 }
