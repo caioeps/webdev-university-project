@@ -8,10 +8,10 @@ let configure = require('./config/application');
 
 let app = configure(express());
 
-app.use('/labActivities', require('./apps/labActivities/app'));
+app.use('/cv', require('./apps/CV/app'));
 
 app.get('/', (req, res) => {
-  res.redirect('/labActivities');
+  res.redirect('/cv');
 });
 
 // catch 404 and forward to error handler

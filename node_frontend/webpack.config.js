@@ -8,7 +8,7 @@ const devMode = process.env.NODE_ENV !== 'production'
 module.exports = {
   mode: 'development',
   entry: {
-    labActivities: path.resolve(__dirname, 'apps', 'labActivities', 'assets', 'packs', 'application.js')
+    cv: path.resolve(__dirname, 'apps', 'CV', 'assets', 'packs', 'application.js')
   },
   output: {
     path: path.resolve(__dirname, 'public', 'packs'),
