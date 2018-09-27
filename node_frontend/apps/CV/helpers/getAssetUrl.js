@@ -6,6 +6,7 @@ const manifest = JSON.parse(
 );
 
 function getAssetUrl(filename) {
+  console.log(manifest[filename])
   return manifest[filename];
 }
 

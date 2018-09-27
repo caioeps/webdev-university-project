@@ -2,7 +2,8 @@ doctype html
 html
   head
     title= title
-    script(src=viewHelpers.getAssetUrl('labActivities.js'))
-    link(href=viewHelpers.getAssetUrl('labActivities.css') rel="stylesheet")
+    script(src=viewHelpers.getAssetUrl('cv.js'))
+    link(href=viewHelpers.getAssetUrl('cv.css') rel="stylesheet")
   body
-    block content
+    .container
+      block content

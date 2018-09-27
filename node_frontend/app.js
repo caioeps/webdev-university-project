@@ -8,6 +8,9 @@ let configure = require('./config/application');
 
 let app = configure(express());
 
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'templates'));
+
 app.use('/cv', require('./apps/CV/app'));
 
 app.get('/', (req, res) => {

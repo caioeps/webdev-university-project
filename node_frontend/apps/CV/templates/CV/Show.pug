@@ -1,5 +1,14 @@
 extends ../layout
 
 block content
-  h1= title
-  p Welcome to #{name}'s CV
+  .row
+    .col
+      h1= person.name
+      p Este é o CV de #{person.name}
+  .row
+    .col
+      p Nome: #{person.name}
+      p Idade: #{person.age}
+      p Habilidades: #{person.skills}
+
+

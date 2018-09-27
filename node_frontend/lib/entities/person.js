@@ -1,7 +1,9 @@
 class Person {
-  constructor({ name, age } = {}) {
-    this.name = name || '';
-    this.age = this.age
+  constructor(attrs = {}) {
+    this.name = attrs.name || '';
+    this.age = attrs.age
+    this.skills = attrs.skills;
+    this.id = attrs.id;
   }
 }
 

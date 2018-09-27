@@ -7,8 +7,9 @@ const router = Router();
 const CVController = require('./controllers/CV');
 
 // Root
-router.get('/', CVController.Index)
-router.get('/cv/:id', CVController.Show)
-router.get('/cv/new', CVController.New)
+router.get('/', CVController.Index);
+router.post('/', CVController.Create);
+router.get('/new', CVController.New);
+router.get('/:id', CVController.Show);
 
 module.exports = router;

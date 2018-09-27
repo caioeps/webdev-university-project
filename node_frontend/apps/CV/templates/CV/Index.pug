@@ -4,3 +4,7 @@ block content
   h1 Lista de currículos
   p Seja bem vindo!
   a(href='/cv/new') Novo currículo
+  ul
+    for person in people
+      li
+        a(href=`/cv/${person.id}`)= person.name || 'Sem nome'
