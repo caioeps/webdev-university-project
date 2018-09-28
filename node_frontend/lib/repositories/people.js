@@ -16,7 +16,6 @@ class PeopleRepository {
 
   find(id) {
     const res = this.getCollection().findOne({ id });
-    console.log(res)
     return new Person(res);
   }
 
@@ -25,6 +24,10 @@ class PeopleRepository {
     const result = this.getCollection().insert(personWithId);
     database.saveDatabase();
     return result;
+  }
+
+  delete(id) {
+    return this.getCollection().removeWhere({ id });
   }
 
   /**

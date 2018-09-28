@@ -11,5 +11,6 @@ router.get('/', CVController.Index);
 router.post('/', CVController.Create);
 router.get('/new', CVController.New);
 router.get('/:id', CVController.Show);
+router.delete('/:id', CVController.Delete);
 
 module.exports = router;
