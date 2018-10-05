@@ -3,10 +3,11 @@
 .byebug_history
 
 **/node_modules
-**/yarn.lock
-
+**/db/database.json
 **/public/packs
+**/tmp
+**/public/uploads
+**/erl_crash.dump
 
 spec/examples.txt
 
-**/erl_crash.dump
