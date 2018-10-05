@@ -2,9 +2,12 @@
 .bash_history
 .byebug_history
 
-node_backend/node_modules
-node_backend/yarn.lock
+**/node_modules
+**/db/database.json
+**/public/packs
+**/tmp
+**/public/uploads
+**/erl_crash.dump
 
 spec/examples.txt
 
-**/erl_crash.dump

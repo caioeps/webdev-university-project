@@ -6,17 +6,15 @@ let path = require('path');
 
 let configure = require('./config/application');
 
-let indexRouter = require('./routes/index');
-let usersRouter = require('./routes/users');
-
 let app = configure(express());
 
-app.use('/public', express.static('public'));
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'templates'));
 
-app.use('/labActivities', require('./apps/labActivities/app'));
+app.use('/cv', require('./apps/CV/app'));
 
 app.get('/', (req, res) => {
-  res.redirect('/labActivities');
+  res.redirect('/cv');
 });
 
 // catch 404 and forward to error handler

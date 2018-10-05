@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+  h1 Novo CV
+  form(action="/cv" method="post" enctype="multipart/form-data")
+    fieldset
+      .row
+        .col-sm-2
+          label Nome
+        .col-sm
+          input(type="text" name="name")
+      .row
+        .col-sm-2
+          label Idade
+        .col-sm
+          input(type="text" name="age")
+      .row
+        .col-sm-2
+          label Habilidades
+        .col-sm
+          input(type="text" name="skills")
+      .row
+        .col-sm-2
+          label Foto
+        .col-sm
+          input(type="file" name="photo")
+      .row
+        .col-sm
+          input(type="submit" value="Salvar")
