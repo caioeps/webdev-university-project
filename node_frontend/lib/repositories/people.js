@@ -1,9 +1,19 @@
 const path = require('path');
-const uuid = require('uuid/v4')
+const uuid = require('uuid/v4');
+const fs = require('fs');
+const mkdirp = require('mkdirp');
 
 const database = require(path.resolve(APP_ROOT, 'db'));
 
 const Person = require(`${APP_ROOT}/lib/entities/person`);
+
+const uploads = {
+  photo: {
+    destination: (person) => path.resolve(APP_ROOT, 'public', 'uploads', 'people', 'photo', person.getAttribute('id')),
+    filename: (file) => `${Date.now()}.${file.originalname}`,
+    publicPath: (destination) => '/' + path.relative(APP_ROOT, destination)
+  }
+};
 
 class PeopleRepository {
   constructor() {
@@ -19,11 +29,18 @@ class PeopleRepository {
     return new Person(res);
   }
 
-  insert(person) {
-    const personWithId = { ...person, id: uuid() };
-    const result = this.getCollection().insert(personWithId);
-    database.saveDatabase();
-    return result;
+  /**
+   * @param {Person} person
+   */
+  async insert(person) {
+    person.generateId();
+    const res = this.getCollection().insert(person.getAttributes());
+    console.log('INSERT', res)
+    return new Person(res);
+  }
+
+  async update(person) {
+    this.getCollection().update(person.getAttributes());
   }
 
   delete(id) {
@@ -31,16 +48,35 @@ class PeopleRepository {
   }
 
   /**
+   * @api public
+   */
+  uploadPhoto(person, photo) {
+    const { destination, filename, publicPath } = uploads.photo;
+    const newLocation = path.join(destination(person), filename(photo));
+
+    if(!fs.existsSync(destination(person))) {
+      mkdirp.sync(destination(person));
+    }
+
+    return new Promise((resolve, reject) => {
+      fs.rename(photo.path, newLocation, (err) => {
+        if(err) {
+          reject(err);
+        } else {
+          person.setAttribute('photoUrl', publicPath(newLocation));
+          const repo = new PeopleRepository();
+          repo.update(person);
+          resolve(newLocation);
+        }
+      });
+    });
+  }
+
+  /**
    * @api private
    */
   getCollection() {
     return database.getCollection(this.collectionName) || database.addCollection(this.collectionName);
-  }
-
-  generateUuid() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 +-1e11).replace(/[018]/g, c =>
-      (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-    )
   }
 }
 

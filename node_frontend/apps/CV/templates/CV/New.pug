@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   h1 Novo CV
-  form(action="/cv" method="post")
+  form(action="/cv" method="post" enctype="multipart/form-data")
     fieldset
       .row
         .col-sm-2
@@ -19,6 +19,11 @@ block content
           label Habilidades
         .col-sm
           input(type="text" name="skills")
+      .row
+        .col-sm-2
+          label Foto
+        .col-sm
+          input(type="file" name="photo")
       .row
         .col-sm
           input(type="submit" value="Salvar")

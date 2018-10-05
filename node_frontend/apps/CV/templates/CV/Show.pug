@@ -3,12 +3,19 @@ extends ../layout
 block content
   .row
     .col
-      h1= person.name
-      p Este é o CV de #{person.name}
-  .row
-    .col
-      p Nome: #{person.name}
-      p Idade: #{person.age}
-      p Habilidades: #{person.skills}
+      .jumbotron.cv-display
+        h1.display-4= person.getAttribute('name')
+        p.lead= `${person.getAttribute('age')} anos`
+        hr.my-4
+        .row
+          .col
+            p= person.getAttribute('skills')
+        .row
+          .col.text-center
+            figure.figure
+              img(src=person.getAttribute('photoUrl') class="figure-img img-fluid rounded photo")
+        .row
+          .col
+            a(class="btn btn-primary" href="/cv") Voltar
 
 

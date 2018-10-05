@@ -1,2 +1,10 @@
 @import "~bootstrap/dist/css/bootstrap.css";
 
+.cv-display {
+  figure.figure {
+    img.photo {
+      max-width: 400px;
+    }
+  }
+}
+

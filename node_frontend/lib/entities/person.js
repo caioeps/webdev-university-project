@@ -1,9 +1,37 @@
+const uuid = require('uuid/v4')
+const path = require('path');
+
 class Person {
   constructor(attrs = {}) {
-    this.name = attrs.name || '';
-    this.age = attrs.age
-    this.skills = attrs.skills;
-    this.id = attrs.id;
+    this.attributes = { ...attrs };
+  }
+
+  /**
+   * @api public
+   */
+  getAttribute(name) {
+    return this.attributes[name];
+  }
+
+  /**
+   * @api public
+   */
+  setAttribute(name, value) {
+    this.attributes[name] = value;
+  }
+
+  /**
+   * @api public
+   */
+  generateId() {
+    this.setAttribute('id', uuid());
+  }
+
+  /*
+   * @api public
+   */
+  getAttributes() {
+    return this.attributes;
   }
 }
 

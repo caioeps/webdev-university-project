@@ -22,20 +22,20 @@ block content
           for person in people
             tr
               td
-                a(href=`/cv/${person.id}`)= person.id
+                a(href=`/cv/${person.getAttribute('id')}`)= person.getAttribute('id')
               td
-                = person.name || 'Sem nome'
+                = person.getAttribute('name') || 'Sem nome'
               td
-                = person.age
+                = person.getAttribute('age')
               td
-                = person.skills
+                = person.getAttribute('skills')
               td
-                .dropdownv
+                .dropdown
                   button.btn.btn-secondary.dropdown-toggle(type="button" id=`actionsForPerson_${person.id}` data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
                     = 'Ações'
-                  div(class="dropdown-menu" aria-labelledby=`actionsForPerson_${person.id}`)
-                    a(class="dropdown-item" href=`/cv/${person.id}`) Ver
-                    form(action=`/cv/${person.id}` method="POST")
+                  div(class="dropdown-menu" aria-labelledby=`actionsForPerson_${person.getAttribute('id')}`)
+                    a(class="dropdown-item" href=`/cv/${person.getAttribute('id')}`) Ver
+                    form(action=`/cv/${person.getAttribute('id')}` method="POST")
                       input(type="hidden" name="_method" value="DELETE")
                       button(type="submit" class="dropdown-item") Apagar
 

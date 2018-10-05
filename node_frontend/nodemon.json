@@ -2,7 +2,8 @@
   "verbose": true,
   "ignore": [
     "*.test.js",
-    "fixtures/*",
-    "db/database.json"
+    "**/db/database.json",
+    "**/public/uploads/**/*.*",
+    "tmp/**/*.*"
   ]
 }
