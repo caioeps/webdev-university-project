@@ -1,0 +1,9 @@
+{
+  "verbose": true,
+  "ignore": [
+    "*.test.js",
+    "**/db/database.json",
+    "**/public/uploads/**/*.*",
+    "tmp/**/*.*"
+  ]
+}

@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+  .row
+    .col
+      h1 Lista de currículos
+  .row
+    .col
+      p
+        a(class="btn btn-primary" href='/cv/new') Novo currículo
+  .row
+    .col
+      table.table.table-striped.table-dark.table-hover.table-responsive-sm.rounded-bottom
+        thead
+          tr
+            th ID
+            th Nome
+            th Idade
+            th Skills
+            th Ações
+        tbody
+          for person in people
+            tr
+              td
+                a(href=`/cv/${person.getAttribute('id')}`)= person.getAttribute('id')
+              td
+                = person.getAttribute('name') || 'Sem nome'
+              td
+                = person.getAttribute('age')
+              td
+                = person.getAttribute('skills')
+              td
+                .dropdown
+                  button.btn.btn-secondary.dropdown-toggle(type="button" id=`actionsForPerson_${person.id}` data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+                    = 'Ações'
+                  div(class="dropdown-menu" aria-labelledby=`actionsForPerson_${person.getAttribute('id')}`)
+                    a(class="dropdown-item" href=`/cv/${person.getAttribute('id')}`) Ver
+                    form(action=`/cv/${person.getAttribute('id')}` method="POST")
+                      input(type="hidden" name="_method" value="DELETE")
+                      button(type="submit" class="dropdown-item") Apagar
+
