@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+  h1 Entrar
+  form(action="/cv/session" method="post")
+    fieldset
+      .row
+        .col-sm-2
+          label Nome
+        .col-sm
+          input(type="text" name="name")
+      .row
+        .col-sm-2
+          label Senha
+        .col-sm
+          input(type="password" name="password")
+      .row
+        .col-sm-2
+          p Não possui uma conta?
+        .col-sm
+          a(href="/cv/registration/new") Nova conta
+

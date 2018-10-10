@@ -1,11 +1,26 @@
 doctype html
 html
   head
-    title= title
+    title= title || 'CV'
     meta(charset="utf-8")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
-    script(src=viewHelpers.getAssetUrl('cv.js'))
-    link(href=viewHelpers.getAssetUrl('cv.css') rel="stylesheet")
+    script(src=getAssetUrl('cv.js'))
+    link(href=getAssetUrl('cv.css') rel="stylesheet")
   body
+    nav.navbar.navbar-expand-lg.navbar-light.bg-light
+      a.navbar-brand(href='/cv') CV
+      button.navbar-toggler(type='button', data-toggle='collapse', data-target='#navbarSupportedContent', aria-controls='navbarSupportedContent', aria-expanded='false', aria-label='Toggle navigation')
+        span.navbar-toggler-icon
+      #navbarSupportedContent.collapse.navbar-collapse
+        ul.navbar-nav.mr-auto
+          li.nav-item.active
+            a.nav-link(href='/cv')
+              | Home
+              span.sr-only (current)
+        form.form-inline.my-2.my-lg-0
+          if isLoggedIn
+            a(href="/cv/logout") Sair
+          else
+            a(href="/cv/session/new") Entrar
     .container
       block content

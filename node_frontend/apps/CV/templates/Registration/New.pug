@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+  h1 Nova conta
+  form(action="/cv/registration" method="post")
+    fieldset
+      .row
+        .col-sm-2
+          label Nome
+        .col-sm
+          input(type="text" name="name")
+      .row
+        .col-sm-2
+          label Senha
+        .col-sm
+          input(type="password" name="password")
+      .row
+        .col-sm-2
+          label Confirmação de Senha
+        .col-sm
+          input(type="password" name="password_confirmation")
+      .row
+        .col-sm-2
+        .col-sm
+          input(type="submit" value="Cadastrar" class="btn btn-primary")
