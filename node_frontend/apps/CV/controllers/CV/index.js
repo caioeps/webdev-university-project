@@ -2,28 +2,25 @@
 
 const path = require('path');
 
-const PeopleRepository = require(`${APP_ROOT}/lib/repositories/people`);
-const Person = require(`${APP_ROOT}/lib/entities/person`);
+const CV = require(`${APP_ROOT}/lib/models/cv`);
 
 const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: path.resolve(APP_ROOT, 'tmp'),
   filename: (req, file, cb) => {
-    cb(null, `person.photo.${Date.now()}`);
+    cb(null, `cv.photo.${Date.now()}`);
   }
 });
 
 const CVController = {
   Index: (_req, res) => {
-    const peopleRepository = new PeopleRepository()
-    const people = peopleRepository.getAll().reverse();
-    res.render('CV/Index', { people });
+    const cvs = CV.getAll().reverse();
+    res.render('CV/Index', { cvs });
   },
   Show: (req, res) => {
-    const peopleRepository = new PeopleRepository()
-    const person = peopleRepository.find(req.params.id);
-    res.render('CV/Show', { person  });
+    const cv = CV.find(req.params.id);
+    res.render('CV/Show', { cv });
   },
   New: (_req, res) => {
     res.render('CV/New');
@@ -34,18 +31,15 @@ const CVController = {
     const permittedParams = ({ name, age, skills }) => ({ name, age, skills });
 
     upload(req, res, async (err) => {
-      const person = new Person(permittedParams(req.body));
-      const peopleRepository = new PeopleRepository();
+      const cv = permittedParams(req.body);
 
       if(err instanceof multer.MulterError) {
         return next(err);
       }
 
       try {
-        const persistedPerson = await peopleRepository.insert(person);
-
-        const photoUrl =
-          await peopleRepository.uploadPhoto(persistedPerson, req.file)
+        const persistedCv = await CV.insert(cv);
+        const photoUrl = await CV.uploadPhoto(persistedCv, req.file)
       } catch(error) {
         return next(error);
       }
@@ -54,8 +48,7 @@ const CVController = {
     });
   },
   Delete: (req, res) => {
-    const { id } = req.params;
-    new PeopleRepository().delete(id);
+    CV.destroy(re.params.id);
     res.redirect('/cv');
   },
 };
