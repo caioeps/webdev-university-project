@@ -18,9 +18,22 @@ html
               | Home
               span.sr-only (current)
         form.form-inline.my-2.my-lg-0
-          if isLoggedIn
-            a(href="/cv/logout") Sair
+          if isLoggedIn()
+            a(href="/cv/logout?_method=DELETE") Sair
           else
             a(href="/cv/session/new") Entrar
+    - var messages = getMessages()
+    if messages.notice
+      .container-fluid.w-100.bg-success.text-white.align-middle
+        for message in messages.notice
+          p.py-1= message
+    if messages.error
+      .container-fluid.w-100.bg-danger.text-white.align-middle
+        for message in messages.error
+          p.py-1= message
+    if messages.alert
+      .container-fluid.w-100.bg-warning.text-white.align-middle
+        for message in messages.alert
+          p.py-1= message
     .container
       block content

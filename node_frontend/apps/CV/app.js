@@ -1,3 +1,5 @@
+global.CV_ROOT = __dirname;
+
 const path       = require('path');
 const express    = require('express');
 const bodyParser = require('body-parser');
@@ -18,16 +20,16 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.use('/', require('./routes'));
-
 app.locals = {
   getAssetUrl: require('./helpers/getAssetUrl'),
 }
 
 app.use((req, res, next) => {
   res.locals.session = req.session;
-  res.locals.isLoggedIn = !!req.session.userId;
+  res.locals.isLoggedIn = () => !!req.session.userId;
   next();
 });
+
+app.use('/', require('./routes'));
 
 module.exports = app;

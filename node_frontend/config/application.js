@@ -3,6 +3,7 @@ const path = require('path');
 const logger = require('morgan');
 const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
+const flash = require('express-flash-messages')
 
 module.exports = (app) => {
   // view engine setup
@@ -23,6 +24,8 @@ module.exports = (app) => {
 
   // Cookies
   app.use(cookieParser());
+
+  app.use(flash());
 
   app.use('/public', express.static(path.join(APP_ROOT, 'public')));
 

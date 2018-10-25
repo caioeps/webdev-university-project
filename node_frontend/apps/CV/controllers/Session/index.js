@@ -1,9 +1,9 @@
 const { body, check, validationResult } = require('express-validator/check');
 
 const SessionController = {
-  New: (req, res, next) => {
-    res.render('Session/New');
-  },
+  New: require('./New'),
+  Create: require('./Create'),
+  Destroy: require('./Destroy'),
 }
 
 module.exports = SessionController;

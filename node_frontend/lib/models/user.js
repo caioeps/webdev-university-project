@@ -9,8 +9,28 @@ const database = require(path.resolve(APP_ROOT, 'db'));
 
 const COLLECTION_NAME = 'users';
 
+const emailValidator = Joi.extend((joi) => ({
+  base: Joi.string().email().required(),
+  name: 'email',
+  language: {
+    unique: '!!{{value}} is already in use.'
+  },
+  rules: [
+    {
+      name: 'unique',
+      validate(params, value, state, options) {
+        if (findByEmail(value)) {
+          return this.createError('email.unique', { value }, state, options);
+        }
+
+        return value;
+      }
+    }
+  ]
+}));
+
 const registrationSchema = Joi.object().options({ abortEarly: false }).keys({
-	email: Joi.string().email().required().label('User Email'),
+  email: emailValidator.email().unique(),
   name: Joi.string().required(),
 	password: Joi.string().min(8).required(),
 	passwordConfirmation: Joi.any().valid(Joi.ref('password')).required().options({
@@ -24,15 +44,24 @@ const registrationSchema = Joi.object().options({ abortEarly: false }).keys({
  */
 function register(user) {
   return new Promise((resolve, reject) => {
-    Joi.validate(user, registrationSchema, (error) => {
+    Joi.validate(user, registrationSchema, async (error) => {
       if (error) {
         resolve({ errors: enhancedValidationError(error) });
       } else {
-        const userWithPassword = withHashedPassword(user, user.password);
-        resolve({ errors: {}, user: insert(userWithPassword) });
+        if (findByEmail(user.email)) {
+          resolve({ errors })
+        } else {
+          const userWithPassword = await withHashedPassword(user, user.password);
+          const createdUser = await insert(userWithPassword);
+          resolve({ user: createdUser });
+        }
       }
     })
   });
+}
+
+function findByEmail(email) {
+  return getCollection().findOne({ email });
 }
 
 /*
