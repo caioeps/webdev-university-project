@@ -17,11 +17,12 @@ html
             a.nav-link(href='/cv')
               | Home
               span.sr-only (current)
-        form.form-inline.my-2.my-lg-0
-          if isLoggedIn()
-            a(href="/cv/session?_method=DELETE") Sair
-          else
-            a(href="/cv/session/new") Entrar
+        if isLoggedIn()
+          form(action="/cv/session" method="post")
+            input(type="hidden" name="_method" value="DELETE")
+            input(value="Sair" type="submit" class="btn btn-link")
+        else
+          a(href="/cv/session/new") Entrar
     - var messages = getMessages()
     if messages.notice
       .container-fluid.w-100.bg-success.text-white.align-middle

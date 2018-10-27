@@ -1,8 +1,6 @@
-module.exports = function(req, res) {
-  res.render('Registration/New', {
-    form: {
-      name: '',
-      errors: {}
-    }
-  });
-}
+module.exports = (req, res) => res.render('Registration/new', {
+  form: {
+    name: '',
+    errors: {}
+  }
+});
