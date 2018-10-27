@@ -1,0 +1,40 @@
+extends ../layout
+
+block content
+  .col-sm-12
+    .text-center
+      h1 New account
+  form(action="/cv/registration" method="post")
+    fieldset
+      .row.justify-content-center.mt-1
+        .col-sm-12.col-md-4
+          .text-center
+            label Email
+            input(type="email" name="email" class="form-control" value=form.email placeholder="Your email")
+            if form.errors.email
+              small= form.errors.email
+      .row.justify-content-center.mt-1
+        .col-sm-12.col-md-4
+          .text-center
+            label Name
+            input(type="text" name="name" class="form-control" value=form.name placeholder="Full name")
+            if form.errors.name
+              small= form.errors.name
+      .row.justify-content-center.mt-1
+        .col-sm-12.col-md-4
+          .text-center
+            label Password
+            input(type="password" name="password" class="form-control")
+            if form.errors.password
+              small= form.errors.password
+      .row.justify-content-center.mt-1
+        .col-sm-12.col-md-4
+          .text-center
+            label Password confirmation
+            input(type="password" name="passwordConfirmation" class="form-control")
+            if form.errors.passwordConfirmation
+              small= form.errors.passwordConfirmation
+      .row.justify-content-center.mt-3
+        .col-sm-12.col-md-4
+          .text-center
+            input(type="submit" value="Cadastrar" class="btn btn-primary")

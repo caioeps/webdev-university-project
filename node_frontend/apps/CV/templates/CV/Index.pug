@@ -15,27 +15,24 @@ block content
           tr
             th ID
             th Nome
-            th Idade
             th Skills
             th Ações
         tbody
-          for person in people
+          for cv in cvs
             tr
               td
-                a(href=`/cv/${person.getAttribute('id')}`)= person.getAttribute('id')
+                a(href=`/cv/${cv.id}`)= cv.id
               td
-                = person.getAttribute('name') || 'Sem nome'
+                = cv.name || 'Sem nome'
               td
-                = person.getAttribute('age')
-              td
-                = person.getAttribute('skills')
+                = cv.skills
               td
                 .dropdown
-                  button.btn.btn-secondary.dropdown-toggle(type="button" id=`actionsForPerson_${person.id}` data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+                  button.btn.btn-secondary.dropdown-toggle(type="button" id=`actionsForCV_${cv.id}` data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
                     = 'Ações'
-                  div(class="dropdown-menu" aria-labelledby=`actionsForPerson_${person.getAttribute('id')}`)
-                    a(class="dropdown-item" href=`/cv/${person.getAttribute('id')}`) Ver
-                    form(action=`/cv/${person.getAttribute('id')}` method="POST")
+                  div(class="dropdown-menu" aria-labelledby=`actionsForCV_${cv.id}`)
+                    a(class="dropdown-item" href=`/cv/${cv.id}`) Ver
+                    form(action=`/cv/${cv.id}` method="POST")
                       input(type="hidden" name="_method" value="DELETE")
                       button(type="submit" class="dropdown-item") Apagar
 

@@ -4,16 +4,15 @@ block content
   .row
     .col
       .jumbotron.cv-display
-        h1.display-4= person.getAttribute('name')
-        p.lead= `${person.getAttribute('age')} anos`
+        h1.display-4= cv.name
         hr.my-4
         .row
           .col
-            p= person.getAttribute('skills')
+            p= cv.skills
         .row
           .col.text-center
             figure.figure
-              img(src=person.getAttribute('photoUrl') class="figure-img img-fluid rounded photo")
+              img(src=cv.photoUrl class="figure-img img-fluid rounded photo")
         .row
           .col
             a(class="btn btn-primary" href="/cv") Voltar

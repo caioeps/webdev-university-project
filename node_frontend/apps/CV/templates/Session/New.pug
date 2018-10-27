@@ -1,0 +1,34 @@
+extends ../layout
+
+block content
+  .col-sm-12
+    .text-center
+      h1 Log in
+  form(action="/cv/session" method="post")
+    fieldset
+      .row.justify-content-center.mt-1
+        .col-sm-12.col-md-4
+          .text-center
+            label Email
+            input(type="email" name="email" class="form-control" value=form.email placeholder="Your email")
+            if form.errors.email
+              small= form.errors.email
+      .row.justify-content-center.mt-1
+        .col-sm-12.col-md-4
+          .text-center
+            label Password
+            input(type="password" name="password" class="form-control" placeholder="Password")
+            if form.errors.password
+              small= form.errors.password
+      .row.justify-content-center.mt-3
+        .col-sm-12.col-md-4
+          .text-center
+            input(type="submit" value="Sign in" class="btn btn-primary")
+      .row.justify-content-center.mt-3
+        .col-sm-12.col-md-4
+          .text-center
+            p
+              | Doesn't have an account?
+              = ' '
+              a(href="/cv/registration/new") Click here.
+
