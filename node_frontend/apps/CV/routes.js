@@ -16,7 +16,8 @@ router.get('/registration/new', RegistrationController.New);
 router.post('/registration', RegistrationController.Create);
 
 router.get('/session/new', SessionController.New);
-router.delete('/session/new', SessionController.Destroy);
+router.post('/session', SessionController.Create)
+router.delete('/session', SessionController.Destroy);
 
 router.get('/new', CVController.New);
 router.get('/:id', CVController.Show);

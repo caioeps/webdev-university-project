@@ -19,7 +19,7 @@ html
               span.sr-only (current)
         form.form-inline.my-2.my-lg-0
           if isLoggedIn()
-            a(href="/cv/logout?_method=DELETE") Sair
+            a(href="/cv/session?_method=DELETE") Sair
           else
             a(href="/cv/session/new") Entrar
     - var messages = getMessages()

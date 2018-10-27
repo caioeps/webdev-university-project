@@ -1,4 +1,4 @@
-function ensureLoggedIn(action) {
+function ensureLoggedOut(action) {
   return [
     (req, res, next) => {
       if (res.locals.isLoggedIn()) {
@@ -11,3 +11,5 @@ function ensureLoggedIn(action) {
     action
   ]
 }
+
+module.exports = ensureLoggedOut;

@@ -1,12 +1,10 @@
-const { body, check, validationResult } = require('express-validator/check');
-
 const User = require(`${APP_ROOT}/lib/models/user`);
 
 async function Create(req, res) {
   const { email, name, password, passwordConfirmation } = req.body;
   const user = { email, name, password, passwordConfirmation };
 
-  const { user: createdUser, errors } = await User.register(user);
+  const { user: createdUser, error } = await User.register(user);
 
   if (createdUser) {
     req.session.userId = createdUser.id;
@@ -19,7 +17,7 @@ async function Create(req, res) {
       form: {
         email,
         name,
-        errors
+        errors: error
       }
     });
   }
