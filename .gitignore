@@ -3,7 +3,7 @@
 .byebug_history
 
 **/node_modules
-**/db/database.json
+**/db/collections
 **/public/packs
 **/tmp
 **/public/uploads
