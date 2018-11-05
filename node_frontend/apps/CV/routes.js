@@ -18,7 +18,9 @@ router.delete('/session', SessionController.Destroy);
 
 router.get('/new', CVController.New);
 router.get('/:id', CVController.Show);
-router.delete('/:id', CVController.Delete);
+router.get('/edit/:id', CVController.Edit);
+router.delete('/:id', CVController.Destroy);
+router.put('/:id', CVController.Update);
 
 router.get('/', CVController.Index);
 router.post('/', CVController.Create);

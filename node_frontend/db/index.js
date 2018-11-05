@@ -1,9 +1,16 @@
 const path = require('path');
-const loki = require('lokijs');
+const Datastore = require('nedb');
 
-const database = new loki(path.resolve(__dirname, 'database.json'), {
-  autoload: true,
-  autosave: true
-});
+function generateCollection(collectionName) {
+  return new Datastore({
+    filename: path.resolve(__dirname, 'collections', `${collectionName}.json`),
+    autoload: true
+  });
+}
 
-module.exports = database;
+const db = {};
+
+db.users = generateCollection('users');
+db.cvs = generateCollection('cvs');
+
+module.exports = db;

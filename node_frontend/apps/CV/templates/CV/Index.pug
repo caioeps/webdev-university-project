@@ -14,25 +14,22 @@ block content
         thead
           tr
             th ID
-            th Nome
-            th Skills
-            th Ações
+            th Number of sections
         tbody
           for cv in cvs
             tr
               td
-                a(href=`/cv/${cv.id}`)= cv.id
+                a(href=`/cv/${cv._id}`)= cv._id
               td
-                = cv.name || 'Sem nome'
-              td
-                = cv.skills
+                = [...cv.sections].length
               td
                 .dropdown
-                  button.btn.btn-secondary.dropdown-toggle(type="button" id=`actionsForCV_${cv.id}` data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+                  button.btn.btn-secondary.dropdown-toggle(type="button" id=`actionsForCV_${cv._id}` data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
                     = 'Ações'
-                  div(class="dropdown-menu" aria-labelledby=`actionsForCV_${cv.id}`)
-                    a(class="dropdown-item" href=`/cv/${cv.id}`) Ver
-                    form(action=`/cv/${cv.id}` method="POST")
+                  div(class="dropdown-menu" aria-labelledby=`actionsForCV_${cv._id}`)
+                    a(class="dropdown-item" href=`/cv/${cv._id}`) Show
+                    a(class="dropdown-item" href=`/cv/edit/${cv._id}`) Edit
+                    form(action=`/cv/${cv._id}` method="POST")
                       input(type="hidden" name="_method" value="DELETE")
-                      button(type="submit" class="dropdown-item") Apagar
+                      button(type="submit" class="dropdown-item") Delete
 

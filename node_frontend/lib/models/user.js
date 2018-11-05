@@ -5,9 +5,7 @@ const bcrypt = require('bcrypt');
 
 const saltRounds = 10;
 
-const database = require(path.resolve(APP_ROOT, 'db'));
-
-const COLLECTION_NAME = 'users';
+const db = require(`${APP_ROOT}/db`);
 
 const emailValidator = Joi.extend((joi) => ({
   base: Joi.string().email().required(),
@@ -18,8 +16,8 @@ const emailValidator = Joi.extend((joi) => ({
   rules: [
     {
       name: 'unique',
-      validate(params, value, state, options) {
-        if (findByEmail(value)) {
+      async validate(params, value, state, options) {
+        if (await findByEmail(value)) {
           return this.createError('email.unique', { value }, state, options);
         }
         return value;
@@ -81,12 +79,10 @@ async function login({ email, password }) {
     }
   }
 
-  const user = findByEmail(email);
+  const user = await findByEmail(email);
 
   if (user) {
     const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
-
-    console.log(passwordMatch)
 
     if (!passwordMatch) {
       return loginError;
@@ -100,33 +96,38 @@ async function login({ email, password }) {
 
 /*
  * @api public
-  */
-  async function insert(user) {
-    const userWithNewId = withId(user);
-    const res = getCollection().insert(filterAttributes(userWithNewId));
-    return userWithNewId;
-  }
+ * @returns Promise<user>
+*/
+function insert(user) {
+  return new Promise((resolve, reject) => {
+    db.users.insert(filterAttributes(user), (err, createdUser) => {
+      err ? reject(err) : resolve(createdUser)
+    });
+  });
+}
 
 /**
  * @api private
+ * @returns Promise<user>
  */
 function findByEmail(email) {
-  return getCollection().findOne({ email });
+  return new Promise((resolve, reject) => {
+    db.users.findOne({ email }, (err, user) => {
+      err ? reject(err) : resolve(user)
+    })
+  })
 }
 
 /**
  * @api private
+ * @returns Promise<user>
  */
-function getCollection() {
-  return database.getCollection(COLLECTION_NAME) ||
-    database.addCollection(COLLECTION_NAME);
-}
-
-/**
- * @api private
- */
-function withId(user) {
-  return { ...user, id: uuid() }
+function find(id) {
+  return new Promise((resolve, reject) => {
+    db.users.findOne({ _id: id }, (err, user) => {
+      err ? reject(err) : resolve(user)
+    })
+  })
 }
 
 /**
@@ -158,6 +159,7 @@ const User = {
   register,
   login,
   insert,
+  find
 };
 
 module.exports = User;

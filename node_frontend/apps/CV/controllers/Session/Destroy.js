@@ -7,6 +7,4 @@ async function Destroy(req, res) {
   res.redirect('/cv');
 }
 
-module.exports = [
-  Destroy
-];
+module.exports = Destroy;

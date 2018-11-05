@@ -1,12 +1,13 @@
-function ensureLoggedIn(action) {
-  return [
-    (req, res, next) => {
-      if (res.locals.isLoggedIn()) {
-        next();
-      } else {
-        res.redirect('/cv');
-      }
-    },
-    action
-  ]
+const User = require(`${APP_ROOT}/lib/models/user`);
+
+async function ensureLoggedIn(req, res, next) {
+  if (res.locals.isLoggedIn()) {
+    req.currentUser = await User.find(req.session.userId);
+    next();
+  } else {
+    req.flash('notice', 'You need to sign in');
+    res.redirect('/cv/session/new');
+  }
 }
+
+module.exports = ensureLoggedIn;

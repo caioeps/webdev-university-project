@@ -1,9 +1,17 @@
 extends ../layout
 
 block content
-  h1 New CV
-  form(action="/cv" method="post")
+  h1 Edit CV from #{user.name}
+  form(action=(`/cv/${cv._id}`) method="post")
+    input(type="hidden" name="_method" value="put")
     fieldset#cv-sections
+      for section in cv.sections
+        div.row.mt-2
+          .col-sm-12.text-right
+            p.text-right.remove
+              span(style='cursor: pointer') Remove
+          .col-sm-12
+            textarea.ckeditor(name='sections[]') !{section}
     fieldset
       .row.justify-content-center.mt-3
         .col-sm-12.col-md-4

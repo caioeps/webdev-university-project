@@ -3,45 +3,58 @@ const uuid = require('uuid/v4');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 
-const database = require(path.resolve(APP_ROOT, 'db'));
-
-const uploads = {
-  photo: {
-    destination: (cv) => path.resolve(APP_ROOT, 'public', 'uploads', 'cvs', 'photo', cv.id),
-    filename: (file) => `${Date.now()}.${file.originalname}`,
-    publicPath: (destination) => '/' + path.relative(APP_ROOT, destination)
-  }
-};
-
-const COLLECTION_NAME = 'cvs';
+const db = require(`${APP_ROOT}/db`);
 
 /**
- * @api public
+ * @api private
+ * @returns Promise<cv>
  */
-function getAll() {
-  return getCollection().data;
+function getAllFromUser(user) {
+  return new Promise((resolve, reject) => {
+    db.cvs.find({ userId: user._id }, (err, cvs) => {
+      err ? reject(err) : resolve(cvs)
+    })
+  });
 }
 
 /**
- * @api public
+ * @api private
+ * @returns Promise<cv>
  */
 function find(id) {
-  return getCollection().findOne({ id });
+  return new Promise((resolve, reject) => {
+    db.cvs.findOne({ _id: id }, (err, cv) => {
+      err ? reject(err) : resolve(cv)
+    })
+  });
 }
 
 /**
  * @api public
  * @param {object} cv
+ * @returns Promise<Object> The CV.
  */
-async function insert(cv) {
-  const cvWithId = withId(cv);
-  return getCollection().insert(filterAttributes(cvWithId));
+function insert(cv, { user = {} } = {}) {
+  return new Promise((resolve, reject) => {
+    db.cvs.insert(filterAttributes({ ...cv, userId: user._id }), (err, createdCv) => {
+      err ? reject(err) : resolve(createdCv)
+    });
+  });
 }
 
 /**
  * @api public
+ * @param {object} cv
+ * @returns Promise<Object> The CV.
  */
-async function update(cv) {
+async function update(id, attrs) {
+  const options = { returnUpdatedDocs: true };
+
+  return new Promise((resolve, reject) => {
+    db.cvs.update({ _id: id }, attrs, options, (err, numAffected, cvs) => {
+      err ? reject(err) : resolve(cvs[0])
+    });
+  });
   return getCollection().update(filterAttributes(cv));
 }
 
@@ -49,7 +62,11 @@ async function update(cv) {
  * @api public
  */
 function destroy(id) {
-  return getCollection().removeWhere({ id });
+  return new Promise((resolve, reject) => {
+    db.cvs.remove({ _id: id }, (err, numAffected) => {
+      err ? reject(err) : resolve(numAffected)
+    });
+  });
 }
 
 /**
@@ -93,12 +110,12 @@ function withId(cv) {
 /**
  * @api private
  */
-function filterAttributes({ id, photoUrl, skills, name }) {
-  return { id, photoUrl, skills, name };
+function filterAttributes({ id, sections, userId }) {
+  return { id, sections, userId };
 }
 
 const CV = {
-  getAll,
+  getAllFromUser,
   find,
   insert,
   update,

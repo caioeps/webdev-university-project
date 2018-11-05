@@ -8,7 +8,7 @@ async function Create(req, res) {
   const { user, error } = await User.login({ email, password });
 
   if (user) {
-    req.session.userId = user.id;
+    req.session.userId = user._id;
     req.session.save();
     req.flash('notice', 'Logged in successfully!');
     res.redirect('/cv');
