@@ -1,15 +1,16 @@
 extends ../layout
 
 block content
-  .row
-    .col
-      .cv-display
-        h1.display-4
-          span= user.name
-          div
-            a(class="btn btn-primary text-right" href="/cv") Back
-        hr.my-4
-        for section in cv.sections
-          .row.section !{section}
+  #cv-show
+    .row
+      .col
+        .cv-display
+          h1.display-4
+            span= user.name
+            div
+              a(class="btn btn-primary text-right" href="/cv") Back
+          hr.my-4
+    for section in cv.sections
+      .row.section !{section}
 
 

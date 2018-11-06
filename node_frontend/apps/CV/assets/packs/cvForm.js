@@ -1,5 +1,7 @@
 (() => {
   document.addEventListener('DOMContentLoaded', () => {
+    if (!document.getElementsByClassName('cv-form').length) return;
+
     const sections = document.getElementById('cv-sections');
     const button = document.querySelector('.add-new-cv-section');
 

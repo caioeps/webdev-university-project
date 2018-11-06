@@ -45,17 +45,17 @@ function insert(cv, { user = {} } = {}) {
 /**
  * @api public
  * @param {object} cv
+ * @param {object} params
  * @returns Promise<Object> The CV.
  */
-async function update(id, attrs) {
+async function update(cv, params) {
   const options = { returnUpdatedDocs: true };
 
   return new Promise((resolve, reject) => {
-    db.cvs.update({ _id: id }, attrs, options, (err, numAffected, cvs) => {
-      err ? reject(err) : resolve(cvs[0])
+    db.cvs.update({ _id: cv._id }, filterAttributes({ ...cv, ...params }), options, (err, numAffected, cvs) => {
+      err ? reject(err) : resolve(cvs[0]);
     });
   });
-  return getCollection().update(filterAttributes(cv));
 }
 
 /**

@@ -2,7 +2,7 @@ extends ../layout
 
 block content
   h1 Edit CV from #{user.name}
-  form(action=(`/cv/${cv._id}`) method="post")
+  form(action=(`/cv/${cv._id}`) class="cv-form" method="post")
     input(type="hidden" name="_method" value="put")
     fieldset#cv-sections
       for section in cv.sections
