@@ -1,6 +1,4 @@
-async function New(req, res) {
-  const { email, password } = req.params;
-
+function New(req, res) {
   res.render('Session/New', {
     form: {
       errors: {}

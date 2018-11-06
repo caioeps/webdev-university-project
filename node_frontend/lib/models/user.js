@@ -1,4 +1,3 @@
-const path = require('path');
 const Joi = require('joi')
 const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt');
@@ -48,7 +47,8 @@ const validateSchema = (data, schema) => {
 
 /*
  * @api public
- * @return Promise<{user,error}>
+ * @param {Object} user An object compliant with the registrationSchema.
+ * @return Promise<{user, error}>
  */
 async function register(user) {
   const { error } = await validateSchema(user, registrationSchema);
@@ -57,14 +57,16 @@ async function register(user) {
     return { error: enhancedValidationError(error) };
   }
 
-  const userWithPassword = await withHashedPassword(user, user.password);
+  const userWithPassword = await withHashedPassword(user);
   const createdUser = await insert(userWithPassword);
   return { user: createdUser };
 }
 
 /*
  * @api public
- * @return Promise<{user,error}>
+ * @param {String} email
+ * @param {String} password
+ * @return Promise<{user, error}>
  */
 async function login({ email, password }) {
   const { error } = await validateSchema({ email, password }, loginSchema);
@@ -96,6 +98,7 @@ async function login({ email, password }) {
 
 /*
  * @api public
+ * @param {String} email
  * @returns Promise<user>
 */
 function insert(user) {
@@ -108,6 +111,7 @@ function insert(user) {
 
 /**
  * @api private
+ * @param {String} email
  * @returns Promise<user>
  */
 function findByEmail(email) {
@@ -120,6 +124,7 @@ function findByEmail(email) {
 
 /**
  * @api private
+ * @param {String} id
  * @returns Promise<user>
  */
 function find(id) {
@@ -132,8 +137,9 @@ function find(id) {
 
 /**
  * @api private
+ * @returns {Object} The user with hash password by bcrypt and without password.
  */
-async function withHashedPassword(user, password) {
+async function withHashedPassword({ password, ...user }) {
   const hashedPassword = await bcrypt.hash(password, saltRounds);
   return { ...user, hashedPassword };
 }
@@ -147,6 +153,8 @@ function filterAttributes({ id, email, name, hashedPassword }) {
 
 /**
  * @api private
+ * @param {Object} error - The error from Joi lib.
+ * @returns {Object} A better formatted error so it can be used by the frontend.
  */
 function enhancedValidationError(error) {
   return error.details.reduce((errors, { context: { key }, message }) => {
