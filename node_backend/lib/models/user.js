@@ -1,6 +1,8 @@
 const Joi = require('joi')
 const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
 
 const saltRounds = 10;
 
@@ -45,19 +47,43 @@ const validateSchema = (data, schema) => {
   });
 };
 
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    set: email => email.toLowerCase(),
+    index: {
+      unique: true,
+      sparse: true
+    }
+  },
+  hashedPassword: {
+    type: String,
+    required: true
+  }
+});
+
+const promisify = (fn) => (args) => new Promise((resolve, reject) => {
+  fn(args, (error, ...rest) => error ? reject(error) : resolve(...rest));
+});
+
 /*
  * @api public
- * @param {Object} user An object compliant with the registrationSchema.
+ * @param {Object} user
  * @return Promise<{user, error}>
  */
-async function register(user) {
+UserSchema.statics.register = async function(user) {
   const { error } = await validateSchema(user, registrationSchema);
 
   if (error) {
     return { error: enhancedValidationError(error) };
   }
 
-  const userWithPassword = await withHashedPassword(user);
   const createdUser = await insert(userWithPassword);
   return { user: createdUser };
 }
@@ -68,7 +94,7 @@ async function register(user) {
  * @param {String} password
  * @return Promise<{user, error}>
  */
-async function login({ email, password }) {
+UserSchema.statics.login = async function({ email, password }) {
   const { error } = await validateSchema({ email, password }, loginSchema);
 
   if (error) {
@@ -98,15 +124,11 @@ async function login({ email, password }) {
 
 /*
  * @api public
- * @param {String} email
+ * @param {Object} user
  * @returns Promise<user>
 */
-function insert(user) {
-  return new Promise((resolve, reject) => {
-    db.users.insert(filterAttributes(user), (err, createdUser) => {
-      err ? reject(err) : resolve(createdUser)
-    });
-  });
+UserSchema.statics.insert = function(user) {
+  return promisify(User.create)(user);
 }
 
 /**
@@ -114,12 +136,13 @@ function insert(user) {
  * @param {String} email
  * @returns Promise<user>
  */
-function findByEmail(email) {
-  return new Promise((resolve, reject) => {
-    db.users.findOne({ email }, (err, user) => {
-      err ? reject(err) : resolve(user)
-    })
-  })
+UserSchema.statics.findByEmail = function(email) {
+  return promisify(this.findOne)({ email });
+  //return new Promise((resolve, reject) => {
+    //db.users.findOne({ email }, (err, user) => {
+      //err ? reject(err) : resolve(user)
+    //})
+  //});
 }
 
 /**
@@ -127,28 +150,13 @@ function findByEmail(email) {
  * @param {String} id
  * @returns Promise<user>
  */
-function find(id) {
-  return new Promise((resolve, reject) => {
-    db.users.findOne({ _id: id }, (err, user) => {
-      err ? reject(err) : resolve(user)
-    })
-  })
-}
-
-/**
- * @api private
- * @returns {Object} The user with hash password by bcrypt and without password.
- */
-async function withHashedPassword({ password, ...user }) {
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return { ...user, hashedPassword };
-}
-
-/**
- * @api private
- */
-function filterAttributes({ id, email, name, hashedPassword }) {
-  return { id, email, name, hashedPassword };
+UserSchema.statics.findById = function(id) {
+  return promisify(this.constructor().findById)(id);
+  //return new Promise((resolve, reject) => {
+    //this.findOne({ _id: id }, (err, user) => {
+      //err ? reject(err) : resolve(user)
+    //})
+  //});
 }
 
 /**
@@ -163,11 +171,19 @@ function enhancedValidationError(error) {
   }, {});
 }
 
-const User = {
-  register,
-  login,
-  insert,
-  find
-};
+/**
+ * Plugin to add hashed password.
+ * @api private
+ */
+async function withHashedPassword(schema) {
+  schema.pre('save', async (next) => {
+    this.hashedPassword = await bcrypt.hash(this.password, saltRounds);
+    next();
+  });
+}
+
+UserSchema.plugin(withHashedPassword);
+
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

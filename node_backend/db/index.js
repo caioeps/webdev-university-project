@@ -1,16 +1,16 @@
 const path = require('path');
-const Datastore = require('nedb');
+const mongoose = require('mongoose');
 
-function generateCollection(collectionName) {
-  return new Datastore({
-    filename: path.resolve(__dirname, 'collections', `${collectionName}.json`),
-    autoload: true
-  });
-}
+const dbHost = `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/`;
+const dbOptions = {
+  dbName: process.env.DB_NAME,
+  user:   process.env.DB_USER,
+  pass:   process.env.DB_PASSWORD,
+  autoIndex: process.env.NODE_ENV === 'development',
+  useNewUrlParser: true
+};
 
-const db = {};
-
-db.users = generateCollection('users');
-db.cvs = generateCollection('cvs');
+// TODO: Move this later to an express middleware.
+const db = mongoose.createConnection(dbHost, dbOptions);
 
 module.exports = db;
