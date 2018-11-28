@@ -10,14 +10,20 @@ const db = require(`${APP_ROOT}/db`);
 const CVSchema = new Schema({
   sections: {
     type: [String],
-    required: true
+    required: true,
+    validate : {
+      validator : (array) => array.every(v => typeof v === 'string')
+    }
   },
-  userId: {
+  user: {
     type: Schema.Types.ObjectId,
     required: true,
-    index: true
+    index: true,
+    ref: 'User'
   }
 });
+
+CVSchema.index({ userId: 1 });
 
 class CVModel {
   /**
@@ -26,7 +32,7 @@ class CVModel {
    */
   static getAllFromUser(user) {
     return new Promise((resolve, reject) => {
-      CV.find({ userId: user._id }, (err, cvs) => {
+      CV.find({ user }, (err, cvs) => {
         err ? reject(err) : resolve(cvs)
       })
     });
@@ -49,10 +55,19 @@ class CVModel {
    * @param {object} cv
    * @returns Promise<Object> The CV.
    */
-  static insert(cv, { user = {} } = {}) {
+  static insert(attrs, { user }) {
+    const cv = new CV(attrs);
+    cv.user = user;
+
     return new Promise((resolve, reject) => {
-      CV.insert(filterAttributes({ ...cv, userId: user._id }), (err, createdCv) => {
-        err ? reject(err) : resolve(createdCv)
+      cv.save(cvError => {
+        if (cvError) resolve({ error: cvError });
+
+        user.cvs.push(cv);
+
+        user.save(userError => {
+          resolve({ error: userError, cv });
+        });
       });
     });
   }
@@ -85,9 +100,7 @@ class CVModel {
   }
 }
 
-CVSchema.index({ userId: 1 });
 CVSchema.loadClass(CVModel)
-
 const CV = mongoose.model('CV', CVSchema);
 
 module.exports = CV;

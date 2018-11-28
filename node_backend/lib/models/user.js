@@ -1,12 +1,37 @@
 const Joi = require('joi')
 const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt');
+
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
 const saltRounds = 10;
 
 const db = require(`${APP_ROOT}/db`);
+
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    set: email => email.toLowerCase(),
+    index: true
+  },
+  hashedPassword: {
+    type: String,
+    required: true
+  },
+  cvs: [{
+    type: Schema.Types.ObjectId,
+    ref: 'CV'
+  }]
+});
+
+UserSchema.index({ email: 1 });
 
 const emailValidator = Joi.extend((joi) => ({
   base: Joi.string().email().required(),
@@ -47,27 +72,6 @@ const validateSchema = (data, schema) => {
   });
 };
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    set: email => email.toLowerCase(),
-    index: true
-  },
-  hashedPassword: {
-    type: String,
-    required: true
-  },
-});
-
-UserSchema.index({ email: 1 });
-
-console.log(db)
 class UserModel {
   /*
    * @api public
@@ -126,7 +130,6 @@ class UserModel {
   */
   static insert(attrs) {
     let user = new User(attrs);
-    console.log(user)
 
     return new Promise((resolve, reject) => {
       user.save(error => {
@@ -193,7 +196,7 @@ function decorateJoiError(error) {
 }
 
 function decorateMongooseError(error) {
-  if (!error) return error;
+  if (!error) return {};
 
   return Object.keys(error.errors).reduce((errors, key) => {
     errors[key] = errors.errors[key].message;
@@ -207,7 +210,10 @@ function decorateMongooseError(error) {
  */
 async function withHashedPassword(schema) {
   schema.pre('validate', async function(next) {
-    this.hashedPassword = await bcrypt.hash(this.password, saltRounds);
+    if (this.password && this.passwordConfirmation) {
+      this.hashedPassword = await bcrypt.hash(this.password, saltRounds);
+    }
+
     next();
   });
 }
@@ -215,6 +221,6 @@ async function withHashedPassword(schema) {
 UserSchema.plugin(withHashedPassword);
 UserSchema.loadClass(UserModel)
 
-const User = db.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = UserModel;

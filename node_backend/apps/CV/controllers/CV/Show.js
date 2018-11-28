@@ -5,7 +5,6 @@ const User = require(`${APP_ROOT}/lib/models/user`);
 async function Show(req, res) {
   const cv = await CV.find(req.params.id);
   const user = await User.find(cv.userId);
-  console.log(cv)
   res.render('CV/Show', { cv, user });
 }
 
