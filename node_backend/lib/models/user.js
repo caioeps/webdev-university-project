@@ -151,19 +151,6 @@ class UserModel {
     });
   }
 
-  /**
-   * @api private
-   * @param {String} id
-   * @returns Promise<user>
-   */
-  static findById(id) {
-    return new Promise((resolve, reject) => {
-      User.findOne({ _id: id }, (err, user) => {
-        err ? reject(err) : resolve(user)
-      })
-    });
-  }
-
   get password() {
     return this.password_;
   }
@@ -223,4 +210,4 @@ UserSchema.loadClass(UserModel)
 
 const User = mongoose.model('User', UserSchema);
 
-module.exports = UserModel;
+module.exports = User;

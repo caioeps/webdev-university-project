@@ -4,6 +4,7 @@ const fs = require('fs');
 const mkdirp = require('mkdirp');
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const { Types: { ObjectId } } = mongoose;
 
 const db = require(`${APP_ROOT}/db`);
 
@@ -16,7 +17,7 @@ const CVSchema = new Schema({
     }
   },
   user: {
-    type: Schema.Types.ObjectId,
+    type: ObjectId,
     required: true,
     index: true,
     ref: 'User'
@@ -34,18 +35,6 @@ class CVModel {
     return new Promise((resolve, reject) => {
       CV.find({ user }, (err, cvs) => {
         err ? reject(err) : resolve(cvs)
-      })
-    });
-  }
-
-  /**
-   * @api private
-   * @returns Promise<cv>
-   */
-  static find(id) {
-    return new Promise((resolve, reject) => {
-      CV.findOne({ _id: id }, (err, cv) => {
-        err ? reject(err) : resolve(cv)
       })
     });
   }
@@ -79,11 +68,10 @@ class CVModel {
    * @returns Promise<Object> The CV.
    */
   static async update(cv, params) {
-    const options = { returnUpdatedDocs: true };
-
     return new Promise((resolve, reject) => {
-      CV.update({ _id: cv._id }, filterAttributes({ ...cv, ...params }), options, (err, numAffected, cvs) => {
-        err ? reject(err) : resolve(cvs[0]);
+      cv.set(params);
+      cv.save((error, updatedCv) => {
+        error ? reject(error) : resolve(updatedCv);
       });
     });
   }
@@ -91,10 +79,10 @@ class CVModel {
   /**
    * @api public
    */
-  static destroy(id) {
+  static destroy(cvId) {
     return new Promise((resolve, reject) => {
-      CV.remove({ _id: id }, (err, numAffected) => {
-        err ? reject(err) : resolve(numAffected)
+      CV.deleteOne({ _id: new ObjectId(cvId) }, (error) => {
+        error ? resolve(false) : resolve(true);
       });
     });
   }

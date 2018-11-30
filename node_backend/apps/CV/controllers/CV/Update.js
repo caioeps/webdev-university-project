@@ -1,17 +1,18 @@
 const ensureLoggedIn = require(`${CV_ROOT}/controllers/concerns/ensureLoggedIn`);
 const CV = require(`${APP_ROOT}/lib/models/cv`);
 
-async function Update(req, res) {
+async function Update(req, res, next) {
   const params = { sections } = req.body;
 
+  let cv;
+
   try {
-    const cv = await CV.find(req.params.id)
+    cv = await CV.findById(req.params.id)
     const updatedCv = await CV.update(cv, params);
     req.flash('notice', 'CV updated successfully.')
     res.redirect('/cv');
   } catch(error) {
-    req.flash('error', 'Error updating CV.')
-    res.redirect(`/cv/edit/${cv._id}`)
+    next(error);
   }
 };
 
