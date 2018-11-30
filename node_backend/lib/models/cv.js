@@ -2,125 +2,93 @@ const path = require('path');
 const uuid = require('uuid/v4');
 const fs = require('fs');
 const mkdirp = require('mkdirp');
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+const { Types: { ObjectId } } = mongoose;
 
 const db = require(`${APP_ROOT}/db`);
 
-/**
- * @api private
- * @returns Promise<cv>
- */
-function getAllFromUser(user) {
-  return new Promise((resolve, reject) => {
-    db.cvs.find({ userId: user._id }, (err, cvs) => {
-      err ? reject(err) : resolve(cvs)
-    })
-  });
-}
+const CVSchema = new Schema({
+  sections: {
+    type: [String],
+    required: true,
+    validate : {
+      validator : (array) => array.every(v => typeof v === 'string')
+    }
+  },
+  user: {
+    type: ObjectId,
+    required: true,
+    index: true,
+    ref: 'User'
+  }
+});
 
-/**
- * @api private
- * @returns Promise<cv>
- */
-function find(id) {
-  return new Promise((resolve, reject) => {
-    db.cvs.findOne({ _id: id }, (err, cv) => {
-      err ? reject(err) : resolve(cv)
-    })
-  });
-}
+CVSchema.index({ userId: 1 });
 
-/**
- * @api public
- * @param {object} cv
- * @returns Promise<Object> The CV.
- */
-function insert(cv, { user = {} } = {}) {
-  return new Promise((resolve, reject) => {
-    db.cvs.insert(filterAttributes({ ...cv, userId: user._id }), (err, createdCv) => {
-      err ? reject(err) : resolve(createdCv)
+class CVModel {
+  /**
+   * @api private
+   * @returns Promise<cv>
+   */
+  static getAllFromUser(user) {
+    return new Promise((resolve, reject) => {
+      CV.find({ user }, (err, cvs) => {
+        err ? reject(err) : resolve(cvs)
+      })
     });
-  });
-}
-
-/**
- * @api public
- * @param {object} cv
- * @param {object} params
- * @returns Promise<Object> The CV.
- */
-async function update(cv, params) {
-  const options = { returnUpdatedDocs: true };
-
-  return new Promise((resolve, reject) => {
-    db.cvs.update({ _id: cv._id }, filterAttributes({ ...cv, ...params }), options, (err, numAffected, cvs) => {
-      err ? reject(err) : resolve(cvs[0]);
-    });
-  });
-}
-
-/**
- * @api public
- */
-function destroy(id) {
-  return new Promise((resolve, reject) => {
-    db.cvs.remove({ _id: id }, (err, numAffected) => {
-      err ? reject(err) : resolve(numAffected)
-    });
-  });
-}
-
-/**
- * @api public
- */
-function uploadPhoto(cv, photo) {
-  const { destination, filename, publicPath } = uploads.photo;
-  const newLocation = path.join(destination(cv), filename(photo));
-
-  if(!fs.existsSync(destination(cv))) {
-    mkdirp.sync(destination(cv));
   }
 
-  return new Promise((resolve, reject) => {
-    fs.rename(photo.path, newLocation, (err) => {
-      if(err) {
-        reject(err);
-      } else {
-        cv.photoUrl = publicPath(newLocation);
-        CV.update(cv);
-        resolve(newLocation);
-      }
+  /**
+   * @api public
+   * @param {object} cv
+   * @returns Promise<Object> The CV.
+   */
+  static insert(attrs, { user }) {
+    const cv = new CV(attrs);
+    cv.user = user;
+
+    return new Promise((resolve, reject) => {
+      cv.save(cvError => {
+        if (cvError) resolve({ error: cvError });
+
+        user.cvs.push(cv);
+
+        user.save(userError => {
+          resolve({ error: userError, cv });
+        });
+      });
     });
-  });
+  }
+
+  /**
+   * @api public
+   * @param {object} cv
+   * @param {object} params
+   * @returns Promise<Object> The CV.
+   */
+  static async update(cv, params) {
+    return new Promise((resolve, reject) => {
+      cv.set(params);
+      cv.save((error, updatedCv) => {
+        error ? reject(error) : resolve(updatedCv);
+      });
+    });
+  }
+
+  /**
+   * @api public
+   */
+  static destroy(cvId) {
+    return new Promise((resolve, reject) => {
+      CV.deleteOne({ _id: new ObjectId(cvId) }, (error) => {
+        error ? resolve(false) : resolve(true);
+      });
+    });
+  }
 }
 
-/**
- * @api private
- */
-function getCollection() {
-  return database.getCollection(COLLECTION_NAME) || database.addCollection(COLLECTION_NAME);
-}
-
-/**
- * @api private
- */
-function withId(cv) {
-  return { ...cv, id: uuid() };
-}
-
-/**
- * @api private
- */
-function filterAttributes({ id, sections, userId }) {
-  return { id, sections, userId };
-}
-
-const CV = {
-  getAllFromUser,
-  find,
-  insert,
-  update,
-  destroy,
-  uploadPhoto,
-}
+CVSchema.loadClass(CVModel)
+const CV = mongoose.model('CV', CVSchema);
 
 module.exports = CV;

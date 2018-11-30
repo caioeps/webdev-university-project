@@ -3,10 +3,15 @@ global.APP_ROOT = __dirname;
 let express = require('express');
 let createError = require('http-errors');
 let path = require('path');
+let dotenv = require('dotenv');
 
-let configure = require('./config/application');
+let configureApp = require('./config/application');
 
-let app = configure(express());
+dotenv.config({
+  path: path.resolve(__dirname, '.env')
+});
+
+let app = configureApp(express());
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'templates'));

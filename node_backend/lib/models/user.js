@@ -2,9 +2,36 @@ const Joi = require('joi')
 const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt');
 
+const mongoose = require('mongoose');
+const { Schema } = mongoose;
+
 const saltRounds = 10;
 
 const db = require(`${APP_ROOT}/db`);
+
+const UserSchema = new Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    set: email => email.toLowerCase(),
+    index: true
+  },
+  hashedPassword: {
+    type: String,
+    required: true
+  },
+  cvs: [{
+    type: Schema.Types.ObjectId,
+    ref: 'CV'
+  }]
+});
+
+UserSchema.index({ email: 1 });
 
 const emailValidator = Joi.extend((joi) => ({
   base: Joi.string().email().required(),
@@ -16,7 +43,7 @@ const emailValidator = Joi.extend((joi) => ({
     {
       name: 'unique',
       async validate(params, value, state, options) {
-        if (await findByEmail(value)) {
+        if (await User.findByEmail(value)) {
           return this.createError('email.unique', { value }, state, options);
         }
         return value;
@@ -45,110 +72,100 @@ const validateSchema = (data, schema) => {
   });
 };
 
-/*
- * @api public
- * @param {Object} user An object compliant with the registrationSchema.
- * @return Promise<{user, error}>
- */
-async function register(user) {
-  const { error } = await validateSchema(user, registrationSchema);
+class UserModel {
+  /*
+   * @api public
+   * @param {Object} user
+   * @return Promise<{user, error}>
+   */
+  static async register(attrs) {
+    const { error: joiError } = await validateSchema(attrs, registrationSchema);
 
-  if (error) {
-    return { error: enhancedValidationError(error) };
-  }
-
-  const userWithPassword = await withHashedPassword(user);
-  const createdUser = await insert(userWithPassword);
-  return { user: createdUser };
-}
-
-/*
- * @api public
- * @param {String} email
- * @param {String} password
- * @return Promise<{user, error}>
- */
-async function login({ email, password }) {
-  const { error } = await validateSchema({ email, password }, loginSchema);
-
-  if (error) {
-    return { error: enhancedValidationError(error) };
-  }
-
-  const loginError = {
-    error: {
-      base: 'Email or password not valid'
+    if (joiError) {
+      return { error: decorateJoiError(joiError) };
     }
+
+    const { user, error: mongooseError } = await User.insert(attrs);
+    return { user, error: decorateMongooseError(mongooseError) };
   }
 
-  const user = await findByEmail(email);
+  /*
+   * @api public
+   * @param {String} email
+   * @param {String} password
+   * @return Promise<{user, error}>
+   */
+  static async login({ email, password }) {
+    const { error } = await validateSchema({ email, password }, loginSchema);
 
-  if (user) {
-    const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+    if (error) {
+      return { error: decorateJoiError(error) };
+    }
 
-    if (!passwordMatch) {
+    const loginError = {
+      error: {
+        base: 'Email or password not valid'
+      }
+    }
+
+    const user = await User.findByEmail(email);
+
+    if (user) {
+      const passwordMatch = await bcrypt.compare(password, user.hashedPassword);
+
+      if (!passwordMatch) {
+        return loginError;
+      }
+
+      return { user };
+    } else {
       return loginError;
     }
-
-    return { user };
-  } else {
-    return loginError;
   }
-}
 
-/*
- * @api public
- * @param {String} email
- * @returns Promise<user>
-*/
-function insert(user) {
-  return new Promise((resolve, reject) => {
-    db.users.insert(filterAttributes(user), (err, createdUser) => {
-      err ? reject(err) : resolve(createdUser)
+  /*
+   * @api public
+   * @param {Object} user
+   * @returns Promise<user>
+  */
+  static insert(attrs) {
+    let user = new User(attrs);
+
+    return new Promise((resolve, reject) => {
+      user.save(error => {
+        resolve({ error, user });
+      });
+    })
+  }
+
+  /**
+   * @api private
+   * @param {String} email
+   * @returns Promise<user>
+   */
+  static findByEmail(email) {
+    return new Promise((resolve, reject) => {
+      User.findOne({ email }, (err, user) => {
+        err ? reject(err) : resolve(user)
+      })
     });
-  });
-}
+  }
 
-/**
- * @api private
- * @param {String} email
- * @returns Promise<user>
- */
-function findByEmail(email) {
-  return new Promise((resolve, reject) => {
-    db.users.findOne({ email }, (err, user) => {
-      err ? reject(err) : resolve(user)
-    })
-  })
-}
+  get password() {
+    return this.password_;
+  }
 
-/**
- * @api private
- * @param {String} id
- * @returns Promise<user>
- */
-function find(id) {
-  return new Promise((resolve, reject) => {
-    db.users.findOne({ _id: id }, (err, user) => {
-      err ? reject(err) : resolve(user)
-    })
-  })
-}
+  set password(value) {
+    this.password_ = value;
+  }
 
-/**
- * @api private
- * @returns {Object} The user with hash password by bcrypt and without password.
- */
-async function withHashedPassword({ password, ...user }) {
-  const hashedPassword = await bcrypt.hash(password, saltRounds);
-  return { ...user, hashedPassword };
-}
+  get passwordConfirmation() {
+    return this.passwordConfirmation_;
+  }
 
-/**
- * @api private
- */
-function filterAttributes({ id, email, name, hashedPassword }) {
-  return { id, email, name, hashedPassword };
+  set passwordConfirmation(value) {
+    this.passwordConfirmation_ = value;
+  }
 }
 
 /**
@@ -156,18 +173,41 @@ function filterAttributes({ id, email, name, hashedPassword }) {
  * @param {Object} error - The error from Joi lib.
  * @returns {Object} A better formatted error so it can be used by the frontend.
  */
-function enhancedValidationError(error) {
+function decorateJoiError(error) {
+  if (!error) return error;
+
   return error.details.reduce((errors, { context: { key }, message }) => {
     errors[key] = message;
     return errors;
   }, {});
 }
 
-const User = {
-  register,
-  login,
-  insert,
-  find
-};
+function decorateMongooseError(error) {
+  if (!error) return {};
+
+  return Object.keys(error.errors).reduce((errors, key) => {
+    errors[key] = errors.errors[key].message;
+    return errors;
+  }, {});
+}
+
+/**
+ * Plugin to add hashed password.
+ * @api private
+ */
+async function withHashedPassword(schema) {
+  schema.pre('validate', async function(next) {
+    if (this.password && this.passwordConfirmation) {
+      this.hashedPassword = await bcrypt.hash(this.password, saltRounds);
+    }
+
+    next();
+  });
+}
+
+UserSchema.plugin(withHashedPassword);
+UserSchema.loadClass(UserModel)
+
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

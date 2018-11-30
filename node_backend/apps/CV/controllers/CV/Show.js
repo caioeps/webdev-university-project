@@ -3,10 +3,9 @@ const CV = require(`${APP_ROOT}/lib/models/cv`);
 const User = require(`${APP_ROOT}/lib/models/user`);
 
 async function Show(req, res) {
-  const cv = await CV.find(req.params.id);
-  const user = await User.find(cv.userId);
-  console.log(cv)
-  res.render('CV/Show', { cv, user });
+  const { id } = req.params;
+  const cv = await CV.findById(id).populate('user');
+  res.render('CV/Edit', { cv, user: cv.user });
 }
 
 module.exports = [
