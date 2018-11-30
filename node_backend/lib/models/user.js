@@ -19,7 +19,6 @@ const UserSchema = new Schema({
     required: true,
     unique: true,
     set: email => email.toLowerCase(),
-    index: true
   },
   hashedPassword: {
     type: String,
@@ -28,10 +27,12 @@ const UserSchema = new Schema({
   cvs: [{
     type: Schema.Types.ObjectId,
     ref: 'CV'
-  }]
+  }],
+  token: String
 });
 
-UserSchema.index({ email: 1 });
+UserSchema.index({ email: 1 }, { unique: true });
+UserSchema.index({ email: 1, token: 1 });
 
 const emailValidator = Joi.extend((joi) => ({
   base: Joi.string().email().required(),

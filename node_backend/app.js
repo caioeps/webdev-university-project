@@ -17,6 +17,7 @@ app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'templates'));
 
 app.use('/cv', require('./apps/CV/app'));
+app.use('/auth', require('./apps/auth/app'));
 
 app.get('/', (req, res) => {
   res.redirect('/cv');
