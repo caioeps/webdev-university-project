@@ -14,11 +14,13 @@ router.post('/registration', RegistrationController.Create);
 router.post('/session', SessionController.Create)
 router.delete('/session', SessionController.Destroy);
 
-router.get('/:id', CVController.Show);
-router.delete('/:id', CVController.Destroy);
-router.put('/:id', CVController.Update);
+router.get('/cvs/:id', CVController.Show);
+router.delete('/cvs/:id', CVController.Destroy);
+router.put('/cvs/:id', CVController.Update);
 
-router.get('/', CVController.Index);
-router.post('/', CVController.Create);
+router.get('/cvs/', CVController.Index);
+router.post('/cvs/', CVController.Create);
+
+console.log(router.stack)
 
 module.exports = router;

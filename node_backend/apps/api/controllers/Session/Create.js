@@ -1,9 +1,8 @@
 const jwt = require('jsonwebtoken');
 const uuidv4 = require('uuid/v4');
 
-const ensureLoggedOut = require(`${CV_ROOT}/controllers/concerns/ensureLoggedOut`);
-
 const User = require(`${APP_ROOT}/lib/models/user`);
+const userSerializer = require(`${PATHS.SERIALIZERS}/userSerializer`);
 
 async function Create(req, res, next) {
   const { email, password } = req.body;
@@ -15,12 +14,13 @@ async function Create(req, res, next) {
       const token = uuidv4();
 
       user.setToken(token);
-      user.save();
+      await user.save();
       const apiKey = await jwt.sign({ email, token }, process.env.JWT_SECRET)
-      res.send({ meta: { apiKey } });
+      res.set('X-Api-Key', apiKey);
+      res.send(userSerializer.serialize(user));
     } else {
       res.status(422).send({
-        message: 'Wrong email or password'
+        error
       })
     }
   } catch (error) {
@@ -28,4 +28,4 @@ async function Create(req, res, next) {
   }
 }
 
-module.exports = ensureLoggedOut(Create);
+module.exports = Create;

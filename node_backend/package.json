@@ -25,6 +25,7 @@
     "http-errors": "~1.6.2",
     "joi": "^14.0.1",
     "jquery": "^3.3.1",
+    "jsonapi-serializer": "^3.6.4",
     "jsonwebtoken": "^8.4.0",
     "lokijs": "^1.5.5",
     "method-override": "^3.0.0",

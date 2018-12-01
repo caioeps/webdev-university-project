@@ -1,4 +1,4 @@
-const ensureLoggedIn = require(`${CV_ROOT}/controllers/concerns/ensureLoggedIn`);
+const authenticateUser = require(`${API_ROOT}/controllers/concerns/authenticateUser`);
 const CV = require(`${APP_ROOT}/lib/models/cv`);
 
 async function Update(req, res, next) {
@@ -24,7 +24,7 @@ function normalizeSections(req, _res, next) {
 }
 
 module.exports = [
-  ensureLoggedIn,
+  authenticateUser,
   normalizeSections,
   Update
 ];
