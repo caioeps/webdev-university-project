@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const uuidv4 = 'uuid/v4';
+const uuidv4 = require('uuid/v4');
 
 const ensureLoggedOut = require(`${CV_ROOT}/controllers/concerns/ensureLoggedOut`);
 
@@ -12,8 +12,11 @@ async function Create(req, res, next) {
     const { user, error } = await User.login({ email, password });
 
     if (user) {
-      const uuid = uuidv4();
-      const apiKey = jwt.sign({ email, uuid }, process.env.JWT_SECRET)
+      const token = uuidv4();
+
+      user.setToken(token);
+      user.save();
+      const apiKey = await jwt.sign({ email, token }, process.env.JWT_SECRET)
       res.send({ meta: { apiKey } });
     } else {
       res.status(422).send({

@@ -1,9 +1,12 @@
 const User = require(`${APP_ROOT}/lib/models/user`);
 
 async function ensureLoggedIn(req, res, next) {
+  const jwtToken = req.header('X-Api-Token');
+  const { email, token } = jwt.verify(jwtToken, process.env.JWT_SECRET);
+
   if (res.locals.isLoggedIn()) {
     try {
-      req.currentUser = await User.findById(req.session.userId);
+      req.currentUser = await User.find({ email, token });
       next();
     } catch (error) {
       next(error);

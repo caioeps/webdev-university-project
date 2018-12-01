@@ -167,6 +167,10 @@ class UserModel {
   set passwordConfirmation(value) {
     this.passwordConfirmation_ = value;
   }
+
+  setToken(token) {
+    this.set({ token });
+  }
 }
 
 /**
