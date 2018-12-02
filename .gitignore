@@ -1,13 +1,8 @@
-.irb_history
-.bash_history
-.byebug_history
+node_modules
+db/database.json
+tmp
+public/uploads
+yarn-error.log
+erl_crash.dump
 
-**/node_modules
-**/db/collections
-**/public/packs
-**/tmp
-**/public/uploads
-**/erl_crash.dump
-
-spec/examples.txt
-
+.env
