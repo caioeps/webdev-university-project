@@ -1,0 +1,294 @@
+{
+	"info": {
+		"_postman_id": "82e4b942-7f88-4ca5-9ccb-4d51a234267c",
+		"name": "web development - marques",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Sign up",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\":\"caio\",\n\t\"email\":\"caio@email.com\",\n\t\"password\":\"caiocaio\",\n\t\"passwordConfirmation\":\"caiocaio\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}/api/registration",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"registration"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign in",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"caio@email.com\",\n\t\"password\": \"caiocaio\"\n}"
+						},
+						"url": {
+							"raw": "{{host}}/api/session",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"session"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign out",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Key",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/api/session",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"session"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CVs",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-Api-Token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"sections\": [\n\t\t\"<p>Hi!</p>\",\n\t\t\"<p>How u doin'?</p>\"\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{host}}/api/cvs",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"cvs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"sections\": [\n\t\t\"<p>Hi!</p>\",\n\t\t\"<p>How u doin', fella?</p>\"\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{host}}/api/cvs/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"cvs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5c03d5e4ea900f52a44956df"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/api/cvs/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"cvs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5c03d5e4ea900f52a44956df"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Api-Token",
+								"value": "{{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/api/cvs/:id",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"cvs",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5c03d5e4ea900f52a44956df"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Index",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text",
+								"disabled": true
+							},
+							{
+								"key": "X-Api-Token",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{host}}/api/cvs",
+							"host": [
+								"{{host}}"
+							],
+							"path": [
+								"api",
+								"cvs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

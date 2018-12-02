@@ -29,5 +29,12 @@ module.exports = (app) => {
 
   app.use('/public', express.static(path.join(APP_ROOT, 'public')));
 
+  // Paths
+  global.PATHS = {
+    MODELS: path.resolve(APP_ROOT, 'lib', 'models'),
+    SERIALIZERS: path.resolve(APP_ROOT, 'lib', 'serializers'),
+  };
+
+
   return app;
 }

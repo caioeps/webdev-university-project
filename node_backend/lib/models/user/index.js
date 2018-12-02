@@ -1,37 +1,20 @@
 const Joi = require('joi')
 const uuid = require('uuid/v4');
 const bcrypt = require('bcrypt');
-
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const saltRounds = 10;
-
 const db = require(`${APP_ROOT}/db`);
 
-const UserSchema = new Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    set: email => email.toLowerCase(),
-    index: true
-  },
-  hashedPassword: {
-    type: String,
-    required: true
-  },
-  cvs: [{
-    type: Schema.Types.ObjectId,
-    ref: 'CV'
-  }]
-});
+const decorateJoiError = require(`${PATHS.MODELS}/concerns/decorateJoiError`);
+const decorateMongooseError = require(`${PATHS.MODELS}/concerns/decorateMongooseError`);
 
-UserSchema.index({ email: 1 });
+const UserSchema = require('./schema');
+
+const withHashedPassword = require('./plugins/withHashedPassword');
+const withHashedToken = require('./plugins/withHashedToken');
+
+const saltRounds = 10;
 
 const emailValidator = Joi.extend((joi) => ({
   base: Joi.string().email().required(),
@@ -151,12 +134,20 @@ class UserModel {
     });
   }
 
+  get token() {
+    return this._token;
+  }
+
+  set token(value) {
+    this._token = value;
+  }
+
   get password() {
-    return this.password_;
+    return this._password;
   }
 
   set password(value) {
-    this.password_ = value;
+    this._password = value;
   }
 
   get passwordConfirmation() {
@@ -166,46 +157,33 @@ class UserModel {
   set passwordConfirmation(value) {
     this.passwordConfirmation_ = value;
   }
-}
 
-/**
- * @api private
- * @param {Object} error - The error from Joi lib.
- * @returns {Object} A better formatted error so it can be used by the frontend.
- */
-function decorateJoiError(error) {
-  if (!error) return error;
+  setToken(token) {
+    this.set({ token });
+  }
 
-  return error.details.reduce((errors, { context: { key }, message }) => {
-    errors[key] = message;
-    return errors;
-  }, {});
-}
+  expireToken() {
+    this.set({ token: null });
+  }
 
-function decorateMongooseError(error) {
-  if (!error) return {};
-
-  return Object.keys(error.errors).reduce((errors, key) => {
-    errors[key] = errors.errors[key].message;
-    return errors;
-  }, {});
-}
-
-/**
- * Plugin to add hashed password.
- * @api private
- */
-async function withHashedPassword(schema) {
-  schema.pre('validate', async function(next) {
-    if (this.password && this.passwordConfirmation) {
+  async encryptPassword() {
+    if(this.password && this.passwordConfirmation) {
       this.hashedPassword = await bcrypt.hash(this.password, saltRounds);
+      return this.hashedPassword;
     }
+  }
 
-    next();
-  });
+  async encryptToken() {
+    if(this.token) {
+      this.hashedToken = await bcrypt.hash(this.token, saltRounds);
+      return this.hashedToken;
+    }
+  }
 }
 
 UserSchema.plugin(withHashedPassword);
+UserSchema.plugin(withHashedToken);
+
 UserSchema.loadClass(UserModel)
 
 const User = mongoose.model('User', UserSchema);
