@@ -1,8 +1,0 @@
-#!/bin/bash
-
-echo '== Installing foreman =='
-gem install foreman --conservative
-
-bin/run web_server bin/setup
-bin/run node_backend yarn
-
