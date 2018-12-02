@@ -5,6 +5,7 @@ let createError = require('http-errors');
 let path = require('path');
 let dotenv = require('dotenv');
 let mongoose = require('mongoose');
+let cors = require('cors');
 
 let configureApp = require('./config/application');
 
@@ -17,10 +18,9 @@ let app = configureApp(express());
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'templates'));
 
-app.use((req, res, next) => {
-  res.set('Access-Control-Allow-Origin', '*');
-  next();
-});
+app.use(cors());
+
+app.options('*', cors())
 
 //app.use('/cv', require('./apps/CV/app'));
 app.use('/api', require('./apps/api/app'));
