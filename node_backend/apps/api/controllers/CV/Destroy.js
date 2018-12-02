@@ -4,12 +4,10 @@ const CV = require(`${APP_ROOT}/lib/models/cv`);
 async function Destroy(req, res) {
   try {
     if (await CV.destroy(req.params.id)) {
-      req.flash('notice', 'CV deleted successfully.');
+      res.sendStatus(200);
     } else {
-      req.flash('error', 'Couldn\'t delee CV. Please, try again.');
+      res.sendStatus(422);
     }
-
-    res.redirect('/cv');
   } catch(error) {
     next(error);
   }

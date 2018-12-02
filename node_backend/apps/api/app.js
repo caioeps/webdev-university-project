@@ -6,14 +6,11 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
-app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'templates'));
-
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ type: 'application/*+json' }))
 
 app.use('/', require('./routes'));
 

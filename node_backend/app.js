@@ -32,10 +32,16 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
 
-  res.render('error', {
-    message: err.message,
-    error: req.app.get('env') === 'development' ? err : {}
-  });
+  console.log(err)
+
+  if (req.is('application/json')) {
+    res.send({ error: req.app.get('env') === 'development' ? err : 'An error ocurred. Please check the application logs'});
+  } else {
+    res.render('error', {
+      message: err.message,
+      error: req.app.get('env') === 'development' ? err : {}
+    });
+  }
 });
 
 module.exports = app;

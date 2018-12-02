@@ -6,6 +6,7 @@ async function Create(req, res, next) {
   const cvAttrs = { sections } = req.body;
 
   try {
+    console.log(req.body)
     const { error, cv } = await CV.insert(cvAttrs, { user: req.currentUser });
 
     if (error) {
@@ -18,15 +19,7 @@ async function Create(req, res, next) {
   }
 };
 
-function normalizeSections(req, _res, next) {
-  const sections = req.body['sections[]']
-  req.body.sections = Array.isArray(sections) ? sections : [sections]
-  delete req.body['sections[]']
-  next();
-}
-
 module.exports = [
   authenticateUser,
-  normalizeSections,
   Create
 ];
