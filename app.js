@@ -17,6 +17,11 @@ let app = configureApp(express());
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'templates'));
 
+app.use((req, res, next) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 //app.use('/cv', require('./apps/CV/app'));
 app.use('/api', require('./apps/api/app'));
 
