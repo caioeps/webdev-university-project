@@ -21,6 +21,4 @@ router.put('/cvs/:id', CVController.Update);
 router.get('/cvs/', CVController.Index);
 router.post('/cvs/', CVController.Create);
 
-console.log(router.stack)
-
 module.exports = router;
