@@ -1,37 +1,17 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 const app = require('../app');
 const debug = require('debug')('node-backend:server');
 const http = require('http');
 
-/**
- * Get port from environment and store in Express.
- */
-
 const port = process.env.PORT || '8080';
 app.set('port', port);
 
-/**
- * Create HTTP server.
- */
-
 let server = http.createServer(app);
 
-/**
- * Listen on provided port, on all network interfaces.
- */
-
-server.listen(port);
-server.on('error', onError);
 server.on('listening', onListening);
-
-/**
- * Event listener for HTTP server "error" event.
- */
+server.on('error', onError);
+server.listen(app.get('port'));
 
 function onError(error) {
   if (error.syscall !== 'listen') {
@@ -40,7 +20,6 @@ function onError(error) {
 
   const bind = typeof port === 'string' ? `Pipe ${port}` : `Port ${port}`;
 
-  // handle specific listen errors with friendly messages
   switch (error.code) {
     case 'EACCES':
       console.error(bind + ' requires elevated privileges');
@@ -54,10 +33,6 @@ function onError(error) {
       throw error;
   }
 }
-
-/**
- * Event listener for HTTP server "listening" event.
- */
 
 function onListening() {
   var addr = server.address();

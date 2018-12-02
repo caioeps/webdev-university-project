@@ -14,6 +14,4 @@ const dbOptions = {
 // TODO: Move this later to an express middleware.
 const db = mongoose.connect(dbHost, dbOptions);
 
-mongoose.set('debug', true);
-
 module.exports = db;
