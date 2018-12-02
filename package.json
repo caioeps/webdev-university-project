@@ -8,6 +8,9 @@
     "webpack:watch": "node_modules/webpack/bin/webpack.js --watch --config=webpack.config.js",
     "webpack-dev-server": "node_modules/webpack-dev-server/bin/webpack-dev-server.js --config=webpack.config.js"
   },
+  "engines": {
+    "node": "8.11.2"
+  },
   "dependencies": {
     "babel-loader": "7",
     "babel-polyfill": "^6.26.0",

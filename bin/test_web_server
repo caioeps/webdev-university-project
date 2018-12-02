@@ -1,4 +1,0 @@
-#!/bin/bash
-
-shift
-cd web_server && rspec "$@"

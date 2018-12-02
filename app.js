@@ -4,6 +4,7 @@ let express = require('express');
 let createError = require('http-errors');
 let path = require('path');
 let dotenv = require('dotenv');
+let mongoose = require('mongoose');
 
 let configureApp = require('./config/application');
 
@@ -21,6 +22,20 @@ app.use('/api', require('./apps/api/app'));
 
 app.get('/', (req, res) => {
   res.redirect('/cv');
+});
+
+app.get('/check', (req, res) => {
+  const mongoCheckEnum = {
+    0: 'disconnected',
+    1: 'connected',
+    2: 'connecting',
+    3: 'disconnecting',
+  }
+
+  res.send({
+    app: 'ok',
+    mongo: mongoCheckEnum[mongoose.connection.readyState]
+  });
 });
 
 // catch 404 and forward to error handler

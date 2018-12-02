@@ -1,8 +1,0 @@
-node_modules
-db/database.json
-tmp
-public/uploads
-yarn-error.log
-erl_crash.dump
-
-.env
