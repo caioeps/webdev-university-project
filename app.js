@@ -18,7 +18,11 @@ let app = configureApp(express());
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'templates'));
 
-app.use(cors());
+const corsOptions = {
+    exposedHeaders: 'X-Api-Key',
+};
+
+app.use(cors(corsOptions));
 
 app.options('*', cors())
 

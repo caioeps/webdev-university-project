@@ -6,10 +6,11 @@ const cvSerializer = require(`${PATHS.SERIALIZERS}/cvSerializer`);
 async function Show(req, res) {
   const { id } = req.params;
   const cv = await CV.findById(id).populate('user');
+
   res.send(cvSerializer.serialize(cv));
 }
 
 module.exports = [
   authenticateUser,
   Show,
-]
+];
