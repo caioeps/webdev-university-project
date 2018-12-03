@@ -6,3 +6,4 @@ yarn-error.log
 erl_crash.dump
 
 .env
+.idea/

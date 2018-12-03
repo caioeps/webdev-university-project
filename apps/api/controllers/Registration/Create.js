@@ -2,8 +2,8 @@ const User = require(`${PATHS.MODELS}/user`);
 const userSerializer = require(`${PATHS.SERIALIZERS}/userSerializer`);
 
 async function Create(req, res, next) {
-  const { email, name, password, passwordConfirmation } = req.body;
-  const userAttrs = { email, name, password, passwordConfirmation };
+  const { email, name, password, passwordConfirmation, role } = req.body;
+  const userAttrs = { email, name, password, passwordConfirmation, role };
 
   try {
     const { user, error } = await User.register(userAttrs);
